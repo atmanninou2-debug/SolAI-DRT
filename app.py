@@ -1,35 +1,47 @@
 import streamlit as st
+import requests
 
 # إعداد الصفحة لتكون احترافية
-st.set_page_config(page_title="SolAI-DRT Pro", page_icon="☀️", layout="wide")
+st.set_page_config(page_title="SolAI-DRT Live", page_icon="☀️", layout="wide")
 
-st.title("☀️ SolAI-DRT: Intelligent Dashboard")
-st.markdown("#### نظام التتبع الذكي للطاقة الشمسية - جهة درعة تافيلالت")
+# --- الربط الحقيقي مع الأرصاد الجوية ---
+API_KEY = "55ba7ec1a378127368b06a97d9c9be74" # الساروت ديالك من OpenWeather
+CITY = "Errachidia"
+URL = f"http://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric"
 
-# صناديق الإحصائيات الفورية
+try:
+    response = requests.get(URL).json()
+    temp = response['main']['temp']
+    wind_speed = response['wind']['speed'] * 3.6 # تحويل من m/s لـ km/h
+    weather_desc = response['weather'][0]['description']
+except Exception:
+    # قيم احتياطية في حالة تأخر تفعيل الساروت
+    temp, wind_speed, weather_desc = 30.0, 12.0, "جاري جلب البيانات..."
+
+# --- واجهة المستخدم ---
+st.title("☀️ SolAI-DRT: Real-Time Intelligence")
+st.markdown(f"#### مراقبة مباشرة لظروف الطقس في جهة درعة تافيلالت ({CITY})")
+
 col1, col2, col3 = st.columns(3)
-col1.metric("درجة الحرارة (الرشيدية)", "31°C", "1.5°C")
-col2.metric("إنتاج الطاقة اليوم", "485 kWh", "15%")
-col3.metric("توفير الكربون", "1.4 Ton", "0.2")
+col1.metric("درجة الحرارة الآن", f"{temp}°C")
+col2.metric("سرعة الرياح", f"{wind_speed:.1f} km/h")
+col3.metric("حالة السماء", weather_desc.capitalize())
 
 st.divider()
 
-# قسم التفاعل والذكاء الاصطناعي
-st.subheader("🔍 مراقبة حالة الألواح")
-panel = st.selectbox("اختر محطة المراقبة:", ["Errachidia-Main", "Ouarzazate-Solar-1", "Midelt-Tech"])
+# --- نظام التنبؤ الذكي بالذكاء الاصطناعي ---
+st.subheader("🤖 تحليل الذكاء الاصطناعي للظروف الجوية")
 
-c1, c2 = st.columns([2, 1])
-with c1:
-    eff = st.slider(f"كفاءة محطة {panel} (%)", 0, 100, 92)
-    if eff < 80:
-        st.error(f"⚠️ تنبيه: كفاءة {panel} منخفضة! احتمال تراكم الغبار.")
-    else:
-        st.success(f"✅ الحالة: {panel} تعمل بكفاءة مثالية.")
+if wind_speed > 30:
+    st.warning(f"🚨 **تنبيه:** سرعة الرياح ({wind_speed:.1f} km/h) مرتفعة! هناك احتمال كبير لتراكم الغبار على الألواح.")
+    st.info("💡 **توصية AI:** ننصح ببرمجة تنظيف للألواح في الـ 24 ساعة القادمة لضمان أعلى كفاءة.")
+else:
+    st.success(f"✅ الجو هادئ حالياً ({wind_speed:.1f} km/h). كفاءة الامتصاص في أفضل مستوياتها.")
 
-with c2:
-    st.info("💡 **توصية AI:** من المتوقع هبوب رياح رملية غداً في منطقة درعة تافيلالت. ننصح ببرمجة تنظيف آلي للألواح.")
+# خريطة الموقع
+st.write("---")
+st.subheader("📍 إحداثيات محطة الرصد")
+st.map({'lat': [31.9316], 'lon': [-4.4244]}) # إحداثيات الرشيدية
 
-st.sidebar.title("SolAI-DRT Settings")
-st.sidebar.info("هذا التطبيق هو MVP لمشروع مراقبة الطاقة الشمسية بالذكاء الاصطناعي.")
-st.sidebar.write("---")
-st.sidebar.write("By Atmane & Team")
+st.sidebar.title("SolAI-DRT Pro")
+st.sidebar.write("Project by: Atmane & Team")
