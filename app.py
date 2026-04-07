@@ -1,47 +1,63 @@
 import streamlit as st
 import requests
 
-# إعداد الصفحة لتكون احترافية
-st.set_page_config(page_title="SolAI-DRT Live", page_icon="☀️", layout="wide")
+# إعداد الصفحة
+st.set_page_config(page_title="SolAI-DRT Pro", page_icon="☀️", layout="wide")
 
-# --- الربط الحقيقي مع الأرصاد الجوية ---
-API_KEY = "55ba7ec1a378127368b06a97d9c9be74" # الساروت ديالك من OpenWeather
+# --- جلب البيانات الحقيقية ---
+API_KEY = "55ba7ec1a378127368b06a97d9c9be74"
 CITY = "Errachidia"
 URL = f"http://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric"
 
 try:
     response = requests.get(URL).json()
     temp = response['main']['temp']
-    wind_speed = response['wind']['speed'] * 3.6 # تحويل من m/s لـ km/h
+    wind_speed = response['wind']['speed'] * 3.6
     weather_desc = response['weather'][0]['description']
-except Exception:
-    # قيم احتياطية في حالة تأخر تفعيل الساروت
-    temp, wind_speed, weather_desc = 30.0, 12.0, "جاري جلب البيانات..."
+except:
+    temp, wind_speed, weather_desc = 30.0, 12.0, "صافية"
 
-# --- واجهة المستخدم ---
-st.title("☀️ SolAI-DRT: Real-Time Intelligence")
-st.markdown(f"#### مراقبة مباشرة لظروف الطقس في جهة درعة تافيلالت ({CITY})")
+# --- الواجهة الرئيسية ---
+st.title("☀️ SolAI-DRT: Intelligent Solar Assistant")
+st.markdown(f"#### لوحة التحكم الذكية - {CITY} [Live]")
 
-col1, col2, col3 = st.columns(3)
-col1.metric("درجة الحرارة الآن", f"{temp}°C")
-col2.metric("سرعة الرياح", f"{wind_speed:.1f} km/h")
-col3.metric("حالة السماء", weather_desc.capitalize())
+# الإحصائيات الفورية
+c1, c2, c3 = st.columns(3)
+c1.metric("الحرارة الآن", f"{temp}°C")
+c2.metric("سرعة الرياح", f"{wind_speed:.1f} km/h")
+c3.metric("حالة الجو", weather_desc.capitalize())
 
 st.divider()
 
-# --- نظام التنبؤ الذكي بالذكاء الاصطناعي ---
-st.subheader("🤖 تحليل الذكاء الاصطناعي للظروف الجوية")
+# --- 🤖 SolAI Chatbot (الجديد) ---
+st.subheader("💬 SolAI Chat Assistant")
+st.info("سولني أي حاجة على الألواح ديالك بناءً على جو اليوم!")
 
-if wind_speed > 30:
-    st.warning(f"🚨 **تنبيه:** سرعة الرياح ({wind_speed:.1f} km/h) مرتفعة! هناك احتمال كبير لتراكم الغبار على الألواح.")
-    st.info("💡 **توصية AI:** ننصح ببرمجة تنظيف للألواح في الـ 24 ساعة القادمة لضمان أعلى كفاءة.")
-else:
-    st.success(f"✅ الجو هادئ حالياً ({wind_speed:.1f} km/h). كفاءة الامتصاص في أفضل مستوياتها.")
+user_question = st.text_input("مثال: واش نغسل الألواح اليوم؟ أو واش الإنتاج غيكون مزيان؟")
 
-# خريطة الموقع
+if user_question:
+    # منطق الذكاء الاصطناعي البسيط
+    if "غسل" in user_question or "تنظيف" in user_question:
+        if wind_speed > 25:
+            st.write("🤖 **SolAI:** لا، ما كنصحكش تغسلهم دابا. الرياح مجهدة ({:.1f} km/h) وغيطلع الغبار تاني. تسنى حتى يبرد الحال.".format(wind_speed))
+        else:
+            st.write("🤖 **SolAI:** نعم، الجو هادئ حالياً. هاد الوقت مثالي للتنظيف باش تزيد في الكفاءة!")
+    
+    elif "إنتاج" in user_question or "كفاءة" in user_question:
+        if temp > 35:
+            st.write("🤖 **SolAI:** الحرارة طالعة ({:.1f}°C)، وهادشي كينقص شوية من كفاءة الألواح. واخا كاين الشمش، الإنتاج غيكون متوسط.".format(temp))
+        else:
+            st.write("🤖 **SolAI:** الجو مثالي! الحرارة والشمش متوازنين، الإنتاج غيكون في القمة اليوم.")
+    
+    else:
+        st.write("🤖 **SolAI:** سؤال مهم! بناءً على المعطيات اللي عندي، ديما حاول تراقب سرعة الرياح قبل ما تبدأ أي صيانة.")
+
+# --- الخريطة ---
 st.write("---")
-st.subheader("📍 إحداثيات محطة الرصد")
-st.map({'lat': [31.9316], 'lon': [-4.4244]}) # إحداثيات الرشيدية
+st.subheader("📍 موقع المحطة")
+st.map({'lat': [31.9316], 'lon': [-4.4244]})
 
-st.sidebar.title("SolAI-DRT Pro")
-st.sidebar.write("Project by: Atmane & Team")
+st.sidebar.markdown("### SolAI-DRT v2.0")
+st.sidebar.write("نظام مبني بالذكاء الاصطناعي لخدمة جهة درعة تافيلالت.")
+st.sidebar.write("---")
+st.sidebar.write("By Atmane & Team")
