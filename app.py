@@ -2,12 +2,28 @@ import streamlit as st
 import requests
 import pandas as pd
 import numpy as np
+import streamlit.components.v1 as components # إضافة مكتبة المكونات
 
-# إعدادات احترافية
+# 1. إعدادات احترافية
 st.set_page_config(page_title="SolAI-DRT Pro Max", page_icon="🚀", layout="wide")
 
-# جلب البيانات الحقيقية
-API_KEY = "55ba7ec1a378127368b06a97d9c9be74" #
+# 2. إضافة Hotjar (تتبع الزوار لتحليل البيانات)
+# ملاحظة: هاد الكود غايخليك تطبق الـ Data-driven decisions لي فالموديل صفحة 3
+components.html("""
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:YOUR_HOTJAR_ID,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+""", height=0)
+
+# 3. جلب البيانات الحقيقية
+API_KEY = "55ba7ec1a378127368b06a97d9c9be74"
 CITY = "Errachidia"
 URL = f"http://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric"
 
@@ -32,7 +48,7 @@ m4.metric("كفاءة النظام", "94%", "2.5%")
 
 st.divider()
 
-# --- 📊 التنبؤ الذكي والبيانات (الجديد) ---
+# --- 📊 التنبؤ الذكي والبيانات ---
 col_chart, col_calc = st.columns([2, 1])
 
 with col_chart:
@@ -68,8 +84,9 @@ if user_input:
 # خريطة احترافية
 st.map({'lat': [31.9316], 'lon': [-4.4244]})
 
+# الشريط الجانبي
 st.sidebar.title("SolAI-DRT v4.0")
 st.sidebar.markdown("---")
 st.sidebar.write("✅ البيانات: Real-time API")
 st.sidebar.write("✅ التحليل: AI Predictive Model")
-st.sidebar.write(f"Developed for RamadnIA 2026") #
+st.sidebar.write(f"Developed for RamadnIA 2026")
