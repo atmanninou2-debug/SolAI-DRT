@@ -2,27 +2,24 @@ import streamlit as st
 import requests
 import pandas as pd
 import numpy as np
-import streamlit.components.v1 as components # إضافة مكتبة المكونات
+import streamlit.components.v1 as components 
 
-# 1. إعدادات احترافية
+# 1. إعدادات الصفحة
 st.set_page_config(page_title="SolAI-DRT Pro Max", page_icon="🚀", layout="wide")
 
-# 2. إضافة Hotjar (تتبع الزوار لتحليل البيانات)
-# ملاحظة: هاد الكود غايخليك تطبق الـ Data-driven decisions لي فالموديل صفحة 3
+# 2. إضافة Contentsquare (التحليل الذكي للزوار)
+# هاد الكود هو "العين" اللي غاتخليك تعرف الزوار فين كيكليكيو
 components.html("""
-<script>
-    (function(h,o,t,j,a,r){
-        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-        h._hjSettings={hjid:YOUR_HOTJAR_ID,hjsv:6};
-        a=o.getElementsByTagName('head')[0];
-        r=o.createElement('script');r.async=1;
-        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-        a.appendChild(r);
-    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+<script type="text/javascript">
+  (function() {
+    var mt = document.createElement("script"); mt.type = "text/javascript"; mt.async = true;
+    mt.src = "https://t.contentsquare.net/uxa/fedc8e127f587.js";
+    document.getElementsByTagName("head")[0].appendChild(mt);
+  })();
 </script>
 """, height=0)
 
-# 3. جلب البيانات الحقيقية
+# 3. جلب بيانات الطقس الحقيقية (الرشيدية)
 API_KEY = "55ba7ec1a378127368b06a97d9c9be74"
 CITY = "Errachidia"
 URL = f"http://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric"
@@ -33,7 +30,8 @@ try:
     wind = data['wind']['speed'] * 3.6
     humidity = data['main']['humidity']
 except:
-    temp, wind, humidity = 28.0, 12.0, 20
+    # بيانات افتراضية في حالة وقوع خطأ في الـ API
+    temp, wind, humidity = 21.0, 7.4, 19
 
 # --- الواجهة العليا ---
 st.title("🚀 SolAI-DRT: Next-Gen Solar Intelligence")
@@ -81,7 +79,7 @@ if user_input:
     else:
         st.write("🤖 **SolAI:** بناءً على إحداثيات الرشيدية، الألواح ديالك دابا في قمة العطاء!")
 
-# خريطة احترافية
+# خريطة احترافية لموقع المشروع
 st.map({'lat': [31.9316], 'lon': [-4.4244]})
 
 # الشريط الجانبي
